@@ -32,7 +32,6 @@ yarn install
 npm i -g @nestjs/cli 
 ```
 
-
 4. Levantar la DB
 ```
 docker-compose up -d
@@ -40,6 +39,7 @@ docker-compose up -d
 
 
 # Stack Usado
-* Mongo DB
+* SQL
+* TypeOrm
 * Nest
 
