@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
+import { CowsModule } from './cows/cows.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { AuthModule } from './auth/auth.module';
     }),
     ProductsModule,
     AuthModule,
+    CowsModule,
+    CommonModule,
   ],
 })
 export class AppModule {}
