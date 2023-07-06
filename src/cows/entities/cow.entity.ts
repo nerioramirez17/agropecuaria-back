@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { CowMilk } from './index';
+import { MilkRegister } from '../../milk_register/entities/milk_register.entity';
 
 @Entity()
 export class Cow {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column('text')
@@ -32,6 +32,8 @@ export class Cow {
   @Column('text')
   cow_info: string;
 
-  @OneToMany(() => CowMilk, (cowMilk) => cowMilk.cow, { cascade: true })
-  milk_register?: CowMilk[];
+  @OneToMany(() => MilkRegister, (milkRegister) => milkRegister.cow, {
+    cascade: true,
+  })
+  milk_register?: MilkRegister[] | null;
 }

@@ -10,7 +10,8 @@ import { CreateCowDto } from './dto/create-cow.dto';
 import { UpdateCowDto } from './dto/update-cow.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
-import { CowMilk, Cow } from './entities';
+import { Cow } from './entities';
+import { MilkRegister } from 'src/milk_register/entities/milk_register.entity';
 
 @Injectable()
 export class CowsService {
@@ -20,24 +21,26 @@ export class CowsService {
     @InjectRepository(Cow)
     private readonly cowRepository: Repository<Cow>,
 
-    @InjectRepository(CowMilk)
-    private readonly cowMilkRepository: Repository<CowMilk>,
+    @InjectRepository(MilkRegister)
+    private readonly milkRegisterRepository: Repository<MilkRegister>,
   ) {}
 
   async create(createCowDto: CreateCowDto) {
     try {
-      const { milk_register = [], ...cowDetails } = createCowDto;
-      const cow = this.cowRepository.create({
-        ...cowDetails,
-        milk_register: milk_register.map((milk) =>
-          this.cowMilkRepository.create({
-            date: milk.date,
-            liters: milk.liters,
-          }),
-        ),
-      });
-      await this.cowRepository.save(cow);
-      return cow;
+      const newCow = this.cowRepository.create(createCowDto);
+      // Guarda la nueva vaca en la base de datos
+      const createdCow = await this.cowRepository.save(newCow);
+
+      // Asocia los registros de leche a la vaca recién creada
+      if (createCowDto.milk_register && createCowDto.milk_register.length > 0) {
+        const milkRegisters = createCowDto.milk_register.map((data) =>
+          this.milkRegisterRepository.create({ ...data, cow: createdCow }),
+        );
+        await this.milkRegisterRepository.save(milkRegisters);
+        // La relación uno a muchas ha sido establecida automáticamente debido a la configuración de las entidades y relaciones en TypeORM
+      }
+
+      return createdCow;
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -46,6 +49,7 @@ export class CowsService {
   findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
     return this.cowRepository.find({
+      relations: ['milk_register'],
       take: limit,
       skip: offset,
     });
