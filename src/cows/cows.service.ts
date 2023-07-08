@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { CreateCowDto } from './dto/create-cow.dto';
 import { UpdateCowDto } from './dto/update-cow.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -47,12 +47,22 @@ export class CowsService {
   }
 
   findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
-    return this.cowRepository.find({
+    const { limit, page } = paginationDto;
+    const offset = (page - 1) * limit; // Calcular el offset correctamente
+
+    const options: FindManyOptions = {
       relations: ['milk_register'],
       take: limit,
       skip: offset,
-    });
+      order: {
+        id: 'ASC', // Orden ascendente por el campo "id". Puedes usar 'DESC' para orden descendente.
+      },
+    };
+
+    return this.cowRepository.findAndCount(options).then(([data, total]) => ({
+      total,
+      data,
+    }));
   }
 
   async findOne(id: string) {
