@@ -47,11 +47,10 @@ export class CowsService {
   }
 
   findAll(paginationDto: PaginationDto) {
-    const { limit, page } = paginationDto;
-    const offset = (page - 1) * limit; // Calcular el offset correctamente
+    const { limit, offset } = paginationDto;
 
     const options: FindManyOptions = {
-      relations: ['milk_register'],
+      relations: ['milk_register', 'meat_register'],
       take: limit,
       skip: offset,
       order: {

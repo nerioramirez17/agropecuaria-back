@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { MilkRegisterService } from './milk_register.service';
 import { CreateMilkRegisterDto } from './dto/create-milk_register.dto';
 import { UpdateMilkRegisterDto } from './dto/update-milk_register.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('milk-register')
 export class MilkRegisterController {
@@ -24,8 +26,8 @@ export class MilkRegisterController {
   }
 
   @Get()
-  findAll() {
-    return this.milkRegisterService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.milkRegisterService.findAll(paginationDto);
   }
 
   @Get(':id')

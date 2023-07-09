@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MilkRegister } from './entities/milk_register.entity';
 import { Repository } from 'typeorm';
 import { Cow } from 'src/cows/entities';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class MilkRegisterService {
@@ -31,7 +32,7 @@ export class MilkRegisterService {
         },
       });
       if (!cow) {
-        throw new NotFoundException('cow not found');
+        throw new InternalServerErrorException('cow not found');
       }
       const milk = new MilkRegister();
       milk.cow = cow;
@@ -43,19 +44,48 @@ export class MilkRegisterService {
     }
   }
 
-  findAll() {
-    return `This action returns all milkRegister`;
+  findAll(paginationDto: PaginationDto) {
+    const { limit, offset } = paginationDto;
+    return this.milkRegisterRespository.find({
+      take: limit,
+      skip: offset,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} milkRegister`;
+  async findOne(id: number) {
+    const milk = await this.milkRegisterRespository.findOneBy({ id });
+    if (!milk) {
+      throw new NotFoundException(`milkRegister ${id} not found`);
+    }
+    return milk;
   }
 
-  update(id: number, updateMilkRegisterDto: UpdateMilkRegisterDto) {
-    return `This action updates a #${id} milkRegister`;
+  async update(id: number, updateMilkRegisterDto: UpdateMilkRegisterDto) {
+    const milkRegister = await this.milkRegisterRespository.preload({
+      id: id,
+      ...updateMilkRegisterDto,
+    });
+
+    if (!milkRegister) {
+      throw new NotFoundException(`milkRegister ${id} not found`);
+    }
+
+    try {
+      await this.milkRegisterRespository.save(milkRegister);
+      return milkRegister;
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const milkRegister = await this.milkRegisterRespository.findOne({
+      where: { id },
+    });
+    if (!milkRegister) {
+      throw new NotFoundException('MilkRegister not found');
+    }
+    await this.milkRegisterRespository.remove(milkRegister);
     return `This action removes a #${id} milkRegister`;
   }
 
