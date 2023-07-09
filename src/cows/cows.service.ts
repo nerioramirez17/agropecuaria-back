@@ -50,7 +50,7 @@ export class CowsService {
     const { limit, offset } = paginationDto;
 
     const options: FindManyOptions = {
-      relations: ['milk_register', 'meat_register'],
+      relations: ['milk_register', 'meat_register', 'medication_register'],
       take: limit,
       skip: offset,
       order: {
