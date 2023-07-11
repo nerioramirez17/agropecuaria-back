@@ -9,7 +9,7 @@ import { CreateMedicationRegisterDto } from './dto/create-medication_register.dt
 import { UpdateMedicationRegisterDto } from './dto/update-medication_register.dto';
 import { MedicationRegister } from './entities/medication_register.entity';
 import { Cow } from 'src/cows/entities';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
@@ -49,10 +49,21 @@ export class MedicationRegisterService {
 
   findAll(paginationDto: PaginationDto) {
     const { limit, offset } = paginationDto;
-    return this.medicationRegisterRespository.find({
+
+    const options: FindManyOptions = {
       take: limit,
       skip: offset,
-    });
+      order: {
+        id: 'ASC',
+      },
+    };
+
+    return this.medicationRegisterRespository
+      .findAndCount(options)
+      .then(([data, total]) => ({
+        total,
+        data,
+      }));
   }
 
   async findOne(id: number) {

@@ -9,7 +9,7 @@ import { CreateMeatRegisterDto } from './dto/create-meat_register.dto';
 import { UpdateMeatRegisterDto } from './dto/update-meat_register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MeatRegister } from './entities/meat_register.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { Cow } from 'src/cows/entities';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
@@ -45,10 +45,21 @@ export class MeatRegisterService {
 
   findAll(paginationDto: PaginationDto) {
     const { limit, offset } = paginationDto;
-    return this.meatRegisterRespository.find({
+
+    const options: FindManyOptions = {
       take: limit,
       skip: offset,
-    });
+      order: {
+        id: 'ASC',
+      },
+    };
+
+    return this.meatRegisterRespository
+      .findAndCount(options)
+      .then(([data, total]) => ({
+        total,
+        data,
+      }));
   }
 
   async findOne(id: number) {

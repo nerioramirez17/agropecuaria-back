@@ -9,7 +9,7 @@ import { CreateMilkRegisterDto } from './dto/create-milk_register.dto';
 import { UpdateMilkRegisterDto } from './dto/update-milk_register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MilkRegister } from './entities/milk_register.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { Cow } from 'src/cows/entities';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
@@ -46,10 +46,21 @@ export class MilkRegisterService {
 
   findAll(paginationDto: PaginationDto) {
     const { limit, offset } = paginationDto;
-    return this.milkRegisterRespository.find({
+
+    const options: FindManyOptions = {
       take: limit,
       skip: offset,
-    });
+      order: {
+        id: 'ASC',
+      },
+    };
+
+    return this.milkRegisterRespository
+      .findAndCount(options)
+      .then(([data, total]) => ({
+        total,
+        data,
+      }));
   }
 
   async findOne(id: number) {
