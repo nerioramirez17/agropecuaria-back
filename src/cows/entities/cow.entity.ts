@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { MilkRegister } from '../../milk_register/entities/milk_register.entity';
 import { MeatRegister } from '../../meat_register/entities/meat_register.entity';
 import { MedicationRegister } from 'src/medication_register/entities/medication_register.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Entity()
 export class Cow {
@@ -36,11 +43,13 @@ export class Cow {
 
   @OneToMany(() => MilkRegister, (milkRegister) => milkRegister.cow, {
     cascade: true,
+    eager: true,
   })
   milk_register?: MilkRegister[] | null;
 
   @OneToMany(() => MeatRegister, (meatRegister) => meatRegister.cow, {
     cascade: true,
+    eager: true,
   })
   meat_register?: MeatRegister[] | null;
 
@@ -49,7 +58,11 @@ export class Cow {
     (medicationRegister) => medicationRegister.cow,
     {
       cascade: true,
+      eager: true,
     },
   )
   medication_register?: MeatRegister[] | null;
+
+  @ManyToOne(() => User, (user) => user.cow, { eager: true })
+  user: User;
 }
