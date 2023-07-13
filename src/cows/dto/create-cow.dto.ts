@@ -55,9 +55,4 @@ export class CreateCowDto {
 
   @IsOptional()
   cow_info?: string;
-
-  @IsArray()
-  @IsNotEmpty()
-  @Type(() => MilkRegisterDto)
-  milk_register: MilkRegisterDto[];
 }

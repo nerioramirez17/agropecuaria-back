@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Cow } from './entities';
 import { MilkRegister } from 'src/milk_register/entities/milk_register.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class CowsService {
@@ -25,20 +26,20 @@ export class CowsService {
     private readonly milkRegisterRepository: Repository<MilkRegister>,
   ) {}
 
-  async create(createCowDto: CreateCowDto) {
+  async create(createCowDto: CreateCowDto, user: User) {
     try {
-      const newCow = this.cowRepository.create(createCowDto);
+      const newCow = this.cowRepository.create({ ...createCowDto, user });
       // Guarda la nueva vaca en la base de datos
       const createdCow = await this.cowRepository.save(newCow);
 
       // Asocia los registros de leche a la vaca recién creada
-      if (createCowDto.milk_register && createCowDto.milk_register.length > 0) {
+      /* if (createCowDto.milk_register && createCowDto.milk_register.length > 0) {
         const milkRegisters = createCowDto.milk_register.map((data) =>
           this.milkRegisterRepository.create({ ...data, cow: createdCow }),
         );
-        await this.milkRegisterRepository.save(milkRegisters);
         // La relación uno a muchas ha sido establecida automáticamente debido a la configuración de las entidades y relaciones en TypeORM
-      }
+        await this.milkRegisterRepository.save(milkRegisters);
+      } */
 
       return createdCow;
     } catch (error) {
@@ -46,13 +47,13 @@ export class CowsService {
     }
   }
 
-  findAll(paginationDto: PaginationDto) {
+  findAll(paginationDto: PaginationDto, user: User) {
     const { limit, offset } = paginationDto;
 
     const options: FindManyOptions = {
-      relations: ['milk_register', 'meat_register', 'medication_register'],
       take: limit,
       skip: offset,
+      where: { user: user },
       order: {
         id: 'ASC', // Orden ascendente por el campo "id". Puedes usar 'DESC' para orden descendente.
       },
@@ -72,11 +73,10 @@ export class CowsService {
     return cow;
   }
 
-  async update(id: string, updateCowDto: UpdateCowDto) {
+  async update(id: string, updateCowDto: UpdateCowDto, user: User) {
     const cow = await this.cowRepository.preload({
       id: id,
       ...updateCowDto,
-      milk_register: [],
     });
 
     if (!cow) {
@@ -84,6 +84,7 @@ export class CowsService {
     }
 
     try {
+      cow.user = user;
       await this.cowRepository.save(cow);
       return cow;
     } catch (error) {

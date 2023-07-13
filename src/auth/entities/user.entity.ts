@@ -1,8 +1,10 @@
+import { Cow } from 'src/cows/entities';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -34,6 +36,11 @@ export class User {
     default: ['user'],
   })
   roles: string[];
+
+  @OneToMany(() => Cow, (cow) => cow.user, {
+    cascade: true,
+  })
+  cow: Cow[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
