@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MeatRegisterService } from './meat_register.service';
 import { CreateMeatRegisterDto } from './dto/create-meat_register.dto';
 import { UpdateMeatRegisterDto } from './dto/update-meat_register.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('meat-register')
+@UseGuards(AuthGuard())
 export class MeatRegisterController {
   constructor(private readonly meatRegisterService: MeatRegisterService) {}
 

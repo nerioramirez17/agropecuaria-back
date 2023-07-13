@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MilkRegisterService } from './milk_register.service';
 import { CreateMilkRegisterDto } from './dto/create-milk_register.dto';
 import { UpdateMilkRegisterDto } from './dto/update-milk_register.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('milk-register')
+@UseGuards(AuthGuard())
 export class MilkRegisterController {
   constructor(private readonly milkRegisterService: MilkRegisterService) {}
 
