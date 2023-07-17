@@ -12,13 +12,20 @@ import { MedicationRegisterModule } from './medication_register/medication_regis
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
+    /* TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
+      autoLoadEntities: true,
+      synchronize: true,
+    }), */
+    // RAILWAY
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: `postgres://postgres:${process.env.NEW_PASSWORD_DB}@containers-us-west-11.railway.app:5690/railway`,
       autoLoadEntities: true,
       synchronize: true,
     }),
