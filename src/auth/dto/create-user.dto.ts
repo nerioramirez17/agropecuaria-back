@@ -23,4 +23,10 @@ export class CreateUserDto {
   @IsString()
   @MinLength(1)
   fullName: string;
+
+  @IsString()
+  agroName: string;
+
+  @IsString()
+  userName: string;
 }

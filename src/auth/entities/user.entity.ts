@@ -31,6 +31,12 @@ export class User {
   })
   isActive: boolean;
 
+  @Column('text')
+  agroName: string;
+
+  @Column('text')
+  userName: string;
+
   @Column('text', {
     array: true,
     default: ['user'],
