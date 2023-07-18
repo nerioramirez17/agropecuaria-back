@@ -45,6 +45,8 @@ export class AuthService {
         id: true,
         userName: true,
         agroName: true,
+        address: true,
+        fullName: true,
       },
     });
 

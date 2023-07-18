@@ -37,6 +37,9 @@ export class User {
   @Column('text')
   userName: string;
 
+  @Column('text')
+  address: string;
+
   @Column('text', {
     array: true,
     default: ['user'],

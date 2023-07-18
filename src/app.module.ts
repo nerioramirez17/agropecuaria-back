@@ -12,7 +12,8 @@ import { MedicationRegisterModule } from './medication_register/medication_regis
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    /* TypeOrmModule.forRoot({
+    // LOCAL
+    TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
@@ -21,14 +22,14 @@ import { MedicationRegisterModule } from './medication_register/medication_regis
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true,
-    }), */
+    }),
     // RAILWAY
-    TypeOrmModule.forRoot({
+    /* TypeOrmModule.forRoot({
       type: 'postgres',
       url: `postgres://postgres:${process.env.NEW_PASSWORD_DB}@containers-us-west-11.railway.app:5690/railway`,
       autoLoadEntities: true,
       synchronize: true,
-    }),
+    }), */
     ProductsModule,
     AuthModule,
     CowsModule,

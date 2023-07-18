@@ -29,4 +29,7 @@ export class CreateUserDto {
 
   @IsString()
   userName: string;
+
+  @IsString()
+  address: string;
 }
