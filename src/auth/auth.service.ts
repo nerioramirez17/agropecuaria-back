@@ -43,10 +43,12 @@ export class AuthService {
         email: true,
         password: true,
         id: true,
-        userName: true,
+        vetFullName: true,
+        vetPhone: true,
+        vetEmail: true,
         agroName: true,
         address: true,
-        fullName: true,
+        meters: true,
       },
     });
 

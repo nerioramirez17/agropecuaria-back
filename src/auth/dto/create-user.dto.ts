@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsNumber,
   IsString,
   Matches,
   MaxLength,
@@ -22,14 +23,22 @@ export class CreateUserDto {
 
   @IsString()
   @MinLength(1)
-  fullName: string;
+  vetFullName: string;
+
+  @IsString()
+  @MinLength(1)
+  vetPhone: string;
+
+  @IsString()
+  @MinLength(1)
+  vetEmail: string;
 
   @IsString()
   agroName: string;
 
   @IsString()
-  userName: string;
-
-  @IsString()
   address: string;
+
+  @IsNumber()
+  meters: number;
 }
