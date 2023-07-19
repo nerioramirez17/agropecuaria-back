@@ -5,6 +5,10 @@ import {
   Body,
   UseGuards,
   SetMetadata,
+  Patch,
+  Param,
+  ParseUUIDPipe,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
@@ -27,6 +31,21 @@ export class AuthController {
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+  @Patch(':id')
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: any) {
+    return this.authService.update(id, updateUserDto);
+  }
+
+  @Get(':id')
+  getUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.authService.findOne(id);
+  }
+
+  @Delete(':id')
+  deletUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.authService.remove(id);
   }
 
   @Get('private')

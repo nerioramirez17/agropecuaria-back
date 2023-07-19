@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import {
   IsString,
   MinLength,
@@ -7,18 +6,7 @@ import {
   IsInt,
   IsArray,
   IsIn,
-  IsNumber,
-  IsNotEmpty,
 } from 'class-validator';
-
-class MilkRegisterDto {
-  @IsString()
-  date: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  liters: number;
-}
 
 export class CreateCowDto {
   @IsString()
