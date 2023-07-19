@@ -23,22 +23,28 @@ export class User {
   })
   password: string;
 
-  @Column('text')
-  fullName: string;
-
   @Column('bool', {
     default: true,
   })
   isActive: boolean;
 
   @Column('text')
+  vetFullName: string;
+
+  @Column('text')
+  vetPhone: string;
+
+  @Column('text')
+  vetEmail: string;
+
+  @Column('text')
   agroName: string;
 
   @Column('text')
-  userName: string;
-
-  @Column('text')
   address: string;
+
+  @Column('int')
+  meters: number;
 
   @Column('text', {
     array: true,
