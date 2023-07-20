@@ -34,13 +34,13 @@ export class CowsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id') id: number) {
     return this.cowsService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: number,
     @Body() updateCowDto: UpdateCowDto,
     @GetUser() user: User,
   ) {
@@ -48,7 +48,7 @@ export class CowsController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id') id: number) {
     return this.cowsService.remove(id);
   }
 }

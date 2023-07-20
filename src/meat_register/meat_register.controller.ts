@@ -24,7 +24,7 @@ export class MeatRegisterController {
   create(@Body() createMeatRegisterDto: CreateMeatRegisterDto) {
     return this.meatRegisterService.create(
       createMeatRegisterDto,
-      createMeatRegisterDto.id_cow_meat.toString(),
+      createMeatRegisterDto.id_cow_meat,
     );
   }
 

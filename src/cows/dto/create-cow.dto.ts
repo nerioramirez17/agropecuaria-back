@@ -28,11 +28,6 @@ export class CreateCowDto {
   @IsOptional()
   id_cow_father?: string;
 
-  @IsString({ each: true })
-  @IsArray()
-  @IsOptional()
-  id_childrens?: string[];
-
   @IsIn(['M', 'H'])
   sex: string;
 

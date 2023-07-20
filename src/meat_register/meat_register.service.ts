@@ -23,7 +23,7 @@ export class MeatRegisterService {
     private readonly cowRespository: Repository<Cow>,
   ) {}
 
-  async create(createMeatRegisterDto: CreateMeatRegisterDto, id: string) {
+  async create(createMeatRegisterDto: CreateMeatRegisterDto, id: number) {
     try {
       const cow = await this.cowRespository.findOne({
         where: {

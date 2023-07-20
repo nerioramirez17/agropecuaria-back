@@ -26,7 +26,7 @@ export class MedicationRegisterService {
 
   async create(
     createMedicationRegisterDto: CreateMedicationRegisterDto,
-    id: string,
+    id: number,
   ) {
     try {
       const cow = await this.cowRespository.findOne({

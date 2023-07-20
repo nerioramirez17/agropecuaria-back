@@ -65,7 +65,7 @@ export class CowsService {
     }));
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const cow = await this.cowRepository.findOneBy({ id });
     if (!cow) {
       throw new NotFoundException(`cow ${id} not found`);
@@ -73,7 +73,7 @@ export class CowsService {
     return cow;
   }
 
-  async update(id: string, updateCowDto: UpdateCowDto, user: User) {
+  async update(id: number, updateCowDto: UpdateCowDto, user: User) {
     const cow = await this.cowRepository.preload({
       id: id,
       ...updateCowDto,
@@ -92,8 +92,10 @@ export class CowsService {
     }
   }
 
-  async remove(id: string) {
-    const cow = await this.findOne(id);
+  async remove(id: number) {
+    const cow = await this.cowRepository.findOne({
+      where: { id },
+    });
     await this.cowRepository.remove(cow);
     return `This action removes a #${id} cow`;
   }
