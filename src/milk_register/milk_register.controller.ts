@@ -24,7 +24,7 @@ export class MilkRegisterController {
   create(@Body() createMilkRegisterDto: CreateMilkRegisterDto) {
     return this.milkRegisterService.create(
       createMilkRegisterDto,
-      createMilkRegisterDto.id_cow_milk.toString(),
+      createMilkRegisterDto.id_cow_milk,
     );
   }
 

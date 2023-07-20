@@ -24,7 +24,7 @@ export class MilkRegisterService {
     private readonly cowRespository: Repository<Cow>,
   ) {}
 
-  async create(createMilkRegisterDto: CreateMilkRegisterDto, id: string) {
+  async create(createMilkRegisterDto: CreateMilkRegisterDto, id: number) {
     try {
       const cow = await this.cowRespository.findOne({
         where: {
@@ -40,7 +40,8 @@ export class MilkRegisterService {
       milk.liters = createMilkRegisterDto.liters;
       return this.milkRegisterRespository.save(milk);
     } catch (error) {
-      this.handleDBExceptions(error);
+      console.log('respuesta del backend', error);
+      throw error;
     }
   }
 

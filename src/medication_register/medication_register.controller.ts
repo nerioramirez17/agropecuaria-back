@@ -26,7 +26,7 @@ export class MedicationRegisterController {
   create(@Body() createMedicationRegisterDto: CreateMedicationRegisterDto) {
     return this.medicationRegisterService.create(
       createMedicationRegisterDto,
-      createMedicationRegisterDto.id_cow_medication.toString(),
+      createMedicationRegisterDto.id_cow_medication,
     );
   }
 

@@ -13,7 +13,7 @@ import { User } from 'src/auth/entities/user.entity';
 @Entity()
 export class Cow {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column('text')
   id_paddock: string;
@@ -26,11 +26,6 @@ export class Cow {
 
   @Column('text')
   id_cow_father: string;
-
-  @Column('text', {
-    array: true,
-  })
-  id_childrens: string[];
 
   @Column('text')
   sex: string;
