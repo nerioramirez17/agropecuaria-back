@@ -74,10 +74,7 @@ export class CowsService {
   }
 
   async update(id: number, updateCowDto: UpdateCowDto, user: User) {
-    const cow = await this.cowRepository.preload({
-      id: id,
-      ...updateCowDto,
-    });
+    const cow = await this.cowRepository.findOneBy({ id });
 
     if (!cow) {
       throw new NotFoundException(`cow ${id} not found`);
@@ -85,6 +82,9 @@ export class CowsService {
 
     try {
       cow.user = user;
+      cow.birth_date = updateCowDto.birth_date;
+      cow.cow_info = updateCowDto.cow_info;
+      cow.id_paddock = updateCowDto.id_paddock;
       await this.cowRepository.save(cow);
       return cow;
     } catch (error) {
