@@ -84,6 +84,11 @@ export class AuthService {
       throw new NotFoundException(`user ${id} not found`);
     }
 
+    if (updateUserDto.password) {
+      const hashedPassword = await bcrypt.hash(updateUserDto.password, 10);
+      user.password = hashedPassword;
+    }
+
     try {
       await this.userRepository.save(user);
       return user;
