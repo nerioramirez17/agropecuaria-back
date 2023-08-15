@@ -12,6 +12,7 @@ import { MilkRegister } from './entities/milk_register.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { Cow } from 'src/cows/entities';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class MilkRegisterService {
@@ -24,62 +25,84 @@ export class MilkRegisterService {
     private readonly cowRespository: Repository<Cow>,
   ) {}
 
-  async create(createMilkRegisterDto: CreateMilkRegisterDto, id: number) {
+  async create(createMilkRegisterDto: CreateMilkRegisterDto, user: any) {
+    const id = createMilkRegisterDto.cow_id;
     try {
       const cow = await this.cowRespository.findOne({
         where: {
           id,
+          user: user,
         },
       });
       if (!cow) {
-        throw new InternalServerErrorException('cow not found');
+        throw new InternalServerErrorException('Vacuno no encontrado');
       }
       const milk = new MilkRegister();
       milk.cow = cow;
       milk.date = createMilkRegisterDto.date;
       milk.liters = createMilkRegisterDto.liters;
-      return this.milkRegisterRespository.save(milk);
+      return this.milkRegisterRespository.save({ ...milk, user });
     } catch (error) {
-      console.log('respuesta del backend', error);
       throw error;
     }
   }
 
-  findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: PaginationDto, user: User) {
     const { limit, offset } = paginationDto;
 
     const options: FindManyOptions = {
       take: limit,
       skip: offset,
+      where: { user: user },
       order: {
         id: 'ASC',
       },
+      relations: ['cow'],
     };
 
-    return this.milkRegisterRespository
-      .findAndCount(options)
-      .then(([data, total]) => ({
-        total,
-        data,
-      }));
+    const [data, total] = await this.milkRegisterRespository.findAndCount(
+      options,
+    );
+
+    const modifiedData = data.map((item) => ({
+      id: item.id,
+      liters: item.liters,
+      date: item.date,
+      cow_id: item.cow.id,
+    }));
+
+    return {
+      total,
+      data: modifiedData,
+    };
   }
 
-  async findOne(id: number) {
-    const milk = await this.milkRegisterRespository.findOneBy({ id });
+  async findOne(id: number, user: any) {
+    const milk = await this.milkRegisterRespository.findOne({
+      where: {
+        id,
+        user: user,
+      },
+    });
     if (!milk) {
-      throw new NotFoundException(`milkRegister ${id} not found`);
+      throw new NotFoundException(`Registro de leche ${id} no encontrado`);
     }
     return milk;
   }
 
-  async update(id: number, updateMilkRegisterDto: UpdateMilkRegisterDto) {
+  async update(
+    id: number,
+    updateMilkRegisterDto: UpdateMilkRegisterDto,
+    user: any,
+  ) {
     const milkRegister = await this.milkRegisterRespository.preload({
       id: id,
       ...updateMilkRegisterDto,
+      user: user,
     });
 
     if (!milkRegister) {
-      throw new NotFoundException(`milkRegister ${id} not found`);
+      throw new NotFoundException(`Registro de leche ${id} no encontrado`);
     }
 
     try {

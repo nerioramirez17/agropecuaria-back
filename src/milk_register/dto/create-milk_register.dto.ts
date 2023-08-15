@@ -2,7 +2,7 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateMilkRegisterDto {
   @IsNumber()
-  id_cow_milk: number;
+  cow_id?: number;
 
   @IsNumber()
   @IsNotEmpty()

@@ -14,6 +14,8 @@ import { CreateMedicationRegisterDto } from './dto/create-medication_register.dt
 import { UpdateMedicationRegisterDto } from './dto/update-medication_register.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/decorators';
+import { User } from 'src/auth/entities/user.entity';
 
 @Controller('medication-register')
 @UseGuards(AuthGuard())
@@ -23,31 +25,36 @@ export class MedicationRegisterController {
   ) {}
 
   @Post()
-  create(@Body() createMedicationRegisterDto: CreateMedicationRegisterDto) {
+  create(
+    @Body() createMedicationRegisterDto: CreateMedicationRegisterDto,
+    @GetUser() user: User,
+  ) {
     return this.medicationRegisterService.create(
       createMedicationRegisterDto,
-      createMedicationRegisterDto.id_cow_medication,
+      user,
     );
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.medicationRegisterService.findAll(paginationDto);
+  findAll(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.medicationRegisterService.findAll(paginationDto, user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.medicationRegisterService.findOne(+id);
+  findOne(@Param('id') id: string, @GetUser() user: User) {
+    return this.medicationRegisterService.findOne(+id, user);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateMedicationRegisterDto: UpdateMedicationRegisterDto,
+    @GetUser() user: User,
   ) {
     return this.medicationRegisterService.update(
       +id,
       updateMedicationRegisterDto,
+      user,
     );
   }
 

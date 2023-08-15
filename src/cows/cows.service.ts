@@ -13,6 +13,7 @@ import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Cow } from './entities';
 import { MilkRegister } from 'src/milk_register/entities/milk_register.entity';
 import { User } from 'src/auth/entities/user.entity';
+import { ForeignKeyViolationException } from 'src/common/exception';
 
 @Injectable()
 export class CowsService {
@@ -29,17 +30,7 @@ export class CowsService {
   async create(createCowDto: CreateCowDto, user: User) {
     try {
       const newCow = this.cowRepository.create({ ...createCowDto, user });
-      // Guarda la nueva vaca en la base de datos
       const createdCow = await this.cowRepository.save(newCow);
-
-      // Asocia los registros de leche a la vaca recién creada
-      /* if (createCowDto.milk_register && createCowDto.milk_register.length > 0) {
-        const milkRegisters = createCowDto.milk_register.map((data) =>
-          this.milkRegisterRepository.create({ ...data, cow: createdCow }),
-        );
-        // La relación uno a muchas ha sido establecida automáticamente debido a la configuración de las entidades y relaciones en TypeORM
-        await this.milkRegisterRepository.save(milkRegisters);
-      } */
 
       return createdCow;
     } catch (error) {
@@ -93,11 +84,19 @@ export class CowsService {
   }
 
   async remove(id: number) {
-    const cow = await this.cowRepository.findOne({
-      where: { id },
-    });
-    await this.cowRepository.remove(cow);
-    return `This action removes a #${id} cow`;
+    try {
+      const cow = await this.cowRepository.findOne({
+        where: { id },
+      });
+      await this.cowRepository.remove(cow);
+
+      return `This action removes a #${id} cow`;
+    } catch (error) {
+      if (error.code === '23503') {
+        throw new ForeignKeyViolationException();
+      }
+      throw error;
+    }
   }
 
   private handleDBExceptions(error: any) {

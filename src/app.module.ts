@@ -8,10 +8,20 @@ import { CommonModule } from './common/common.module';
 import { MilkRegisterModule } from './milk_register/milk_register.module';
 import { MeatRegisterModule } from './meat_register/meat_register.module';
 import { MedicationRegisterModule } from './medication_register/medication_register.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        auth: {
+          user: 'nerioramirez172@gmail.com',
+          pass: 'uggvqznjzpoptmlx',
+        },
+      },
+    }),
     // LOCAL
     TypeOrmModule.forRoot({
       type: 'postgres',

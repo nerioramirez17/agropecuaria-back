@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Cow } from '../../cows/entities/index';
+import { User } from 'src/auth/entities/user.entity';
 
 @Entity()
 export class MedicationRegister {
@@ -21,4 +22,7 @@ export class MedicationRegister {
   @ManyToOne(() => Cow, (cow) => cow.milk_register)
   @JoinColumn({ name: 'cow_id' })
   cow: Cow;
+
+  @ManyToOne(() => User, (user) => user.cow, { eager: true })
+  user: User;
 }

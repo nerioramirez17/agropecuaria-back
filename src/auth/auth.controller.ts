@@ -48,6 +48,11 @@ export class AuthController {
     return this.authService.remove(id);
   }
 
+  @Get('recover-password/:email')
+  getPassword(@Param('email') email: string) {
+    return this.authService.recoverPassword(email);
+  }
+
   @Get('private')
   @UseGuards(AuthGuard())
   testingPrivateRoute(

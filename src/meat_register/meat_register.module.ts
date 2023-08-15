@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MeatRegister } from './entities/meat_register.entity';
 import { Cow } from 'src/cows/entities';
 import { PassportModule } from '@nestjs/passport';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [MeatRegisterController],
@@ -12,6 +13,7 @@ import { PassportModule } from '@nestjs/passport';
   imports: [
     TypeOrmModule.forFeature([MeatRegister, Cow]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    AuthModule,
   ],
 })
 export class MeatRegisterModule {}

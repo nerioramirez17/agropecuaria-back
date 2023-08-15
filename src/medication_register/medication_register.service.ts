@@ -26,52 +26,66 @@ export class MedicationRegisterService {
 
   async create(
     createMedicationRegisterDto: CreateMedicationRegisterDto,
-    id: number,
+    user: any,
   ) {
+    const id = createMedicationRegisterDto.cow_id;
     try {
       const cow = await this.cowRespository.findOne({
         where: {
           id,
+          user: user,
         },
       });
       if (!cow) {
-        throw new InternalServerErrorException('cow not found');
+        throw new InternalServerErrorException('Vacuno no encontrado');
       }
       const medication = new MedicationRegister();
       medication.cow = cow;
       medication.date = createMedicationRegisterDto.date;
       medication.medication = createMedicationRegisterDto.medication;
-      return this.medicationRegisterRespository.save(medication);
+      return this.medicationRegisterRespository.save({ ...medication, user });
     } catch (error) {
       this.handleDBExceptions(error);
     }
   }
 
-  findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: PaginationDto, user: any) {
     const { limit, offset } = paginationDto;
 
     const options: FindManyOptions = {
       take: limit,
       skip: offset,
+      where: { user: user },
       order: {
         id: 'ASC',
       },
+      relations: ['cow'],
     };
 
-    return this.medicationRegisterRespository
-      .findAndCount(options)
-      .then(([data, total]) => ({
-        total,
-        data,
-      }));
+    const [data, total] = await this.medicationRegisterRespository.findAndCount(
+      options,
+    );
+
+    const modifiedData = data.map((item) => ({
+      id: item.id,
+      medication: item.medication,
+      date: item.date,
+      cow_id: item.cow.id,
+    }));
+
+    return {
+      total,
+      data: modifiedData,
+    };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, user: any) {
     const medication = await this.medicationRegisterRespository.findOneBy({
       id,
+      user: user,
     });
     if (!medication) {
-      throw new NotFoundException(`milkRegister ${id} not found`);
+      throw new NotFoundException(`Registro de medicacion ${id} no encontrado`);
     }
     return medication;
   }
@@ -79,16 +93,18 @@ export class MedicationRegisterService {
   async update(
     id: number,
     updateMedicationRegisterDto: UpdateMedicationRegisterDto,
+    user: any,
   ) {
     const medicationRegister = await this.medicationRegisterRespository.preload(
       {
         id: id,
         ...updateMedicationRegisterDto,
+        user: user,
       },
     );
 
     if (!medicationRegister) {
-      throw new NotFoundException(`medicationRegister ${id} not found`);
+      throw new NotFoundException(`Registro de medicacion ${id} no encontrado`);
     }
 
     try {
