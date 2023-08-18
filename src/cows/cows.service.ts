@@ -38,7 +38,7 @@ export class CowsService {
     }
   }
 
-  findAll(paginationDto: PaginationDto, user: User) {
+  async findAll(paginationDto: PaginationDto, user: any) {
     const { limit, offset } = paginationDto;
 
     const options: FindManyOptions = {
@@ -50,10 +50,18 @@ export class CowsService {
       },
     };
 
-    return this.cowRepository.findAndCount(options).then(([data, total]) => ({
-      total,
-      data,
+    const [cows, totalCount] = await this.cowRepository.findAndCount(options);
+    const minCowId = cows.length > 0 ? cows[0].id : 0;
+
+    const cowsWithAdjustedIds = cows.map((cow) => ({
+      ...cow,
+      adjustedId: cow.id - minCowId,
     }));
+
+    return {
+      total: totalCount,
+      data: cowsWithAdjustedIds,
+    };
   }
 
   async findOne(id: number) {
